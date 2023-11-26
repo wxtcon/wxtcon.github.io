@@ -4,6 +4,27 @@
   
     
     <entry>
+      <title>周报-002-26Nov2023</title>
+      <link href="/2023/11/26/WeeklyReport-002-26Nov2023/"/>
+      <url>/2023/11/26/WeeklyReport-002-26Nov2023/</url>
+      
+        <content type="html"><![CDATA[<h1 id="工作周报"><a href="#工作周报" class="headerlink" title=" 工作周报 "></a><p style="text-align: center;"> 工作周报 </p></h1><p style="text-align: center;"> <b>时间: </b> 2023-11-20 ~ 2023-11-26 </p><br><h2 id="一、本周做了什么"><a href="#一、本周做了什么" class="headerlink" title="一、本周做了什么"></a>一、本周做了什么</h2><h3 id="1-pytorch扫盲"><a href="#1-pytorch扫盲" class="headerlink" title="1. pytorch扫盲"></a>1. pytorch扫盲</h3><p>学习pytorch的常用模块，并以CIFAR10编程实现一个图片分类网络以熟悉使用费pytorch进行NN搭建&amp;训练的流程<br>学习笔记：<a href="https://www.damonai.cn/2023/11/25/learn-pytorch/">https://www.damonai.cn/2023/11/25/learn-pytorch/</a><br>学习代码：github.com&#x2F;wxtcon&#x2F;learn_pytorch</p><h3 id="2-GVINS-dataset数据提取"><a href="#2-GVINS-dataset数据提取" class="headerlink" title="2. GVINS-dataset数据提取"></a>2. GVINS-dataset数据提取</h3><p>为了实现离线训练NN，需要将ros bag转为csv格式数据，写了一个脚本，实现rosbag按topic提取数据并写入csv中</p><h3 id="3-DL扫盲"><a href="#3-DL扫盲" class="headerlink" title="3. DL扫盲"></a>3. DL扫盲</h3><p>参考B站资料对Loss Fun、正则化、CNN、RNN、LSTM、GRU等知识点进行了扫盲</p><h2 id="二、下周怎么安排"><a href="#二、下周怎么安排" class="headerlink" title="二、下周怎么安排"></a>二、下周怎么安排</h2><ol><li>写一个提取GVINS误差的代码<br>原始的GVINS-dataset中只有星历、伪距这些数据，不能进行网络的训练，无法直接在GNSS拒止状态下输出GVINS误差，需要先跑一遍GVINS代码，把各个传感器的误差项提取出来</li><li>用GNSS误差数据对LSTM—NN进行离线训练，并评估效果</li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> NaN </category>
+          
+          <category> NaN </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Pytorch入门笔记</title>
       <link href="/2023/11/25/learn-pytorch/"/>
       <url>/2023/11/25/learn-pytorch/</url>
@@ -25,7 +46,7 @@
     
     
     <entry>
-      <title>WeeklyReport-001-19Nov2023</title>
+      <title>周报-001-19Nov2023</title>
       <link href="/2023/11/18/WeeklyReport-001-19Nov2023/"/>
       <url>/2023/11/18/WeeklyReport-001-19Nov2023/</url>
       
