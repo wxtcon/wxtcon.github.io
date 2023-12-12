@@ -4,6 +4,48 @@
   
     
     <entry>
+      <title>WeeklyReport-004-10Dec2023.md</title>
+      <link href="/2023/12/10/WeeklyReport-004-10Dec2023-md/"/>
+      <url>/2023/12/10/WeeklyReport-004-10Dec2023-md/</url>
+      
+        <content type="html"><![CDATA[<h1 id="工作周报"><a href="#工作周报" class="headerlink" title=" 工作周报 "></a><p style="text-align: center;"> 工作周报 </p></h1><p style="text-align: center;"> <b>时间: </b> 2023-12-04 ~ 2023-12-10 </p><br><h2 id="一、本周做了什么"><a href="#一、本周做了什么" class="headerlink" title="一、本周做了什么"></a>一、本周做了什么</h2><h3 id="1-训练GNSS中断场景下的LSTM网络"><a href="#1-训练GNSS中断场景下的LSTM网络" class="headerlink" title="1. 训练GNSS中断场景下的LSTM网络"></a>1. 训练GNSS中断场景下的LSTM网络</h3><p>使用sport_field数据集前5分钟数据进行训练和推理，其中前四分钟用于训练，后一分钟用于模型推理。</p><p><strong>第一种：端到端方案</strong><br>训练时：<br>模型输入为：经过IMU预积分后的位姿（P、V、Q），GVINS融合后的位姿（GNSS有效）<br>想让模型可以学习到这样的函数关系：GNSS有效下的融合位姿 &#x3D; f(IMU预积分后的位姿)<br>评价：这个思路是端到端的来看LSTM的效果，有点极端。GNSS失效时，仅仅依靠模型推理融合后的位姿。</p><p><strong>第二种：退化松耦合方案</strong><br>模型输入为：经过IMU预积分后的位姿（P、V、Q），GNSS有效情况时输出的经纬高（LLA）<br>想让模型可以学习到这样的函数关系：LLA &#x3D; f(IMU预积分后的位姿)</p><h3 id="2-构建LSTM效果评估方法"><a href="#2-构建LSTM效果评估方法" class="headerlink" title="2. 构建LSTM效果评估方法"></a>2. 构建LSTM效果评估方法</h3><p>评估采用的工具是evo，采用RTK在fix解下的LLA数据作为真值，仅评估三轴位置精度，，所有的结果均转换到东北天（ENU）坐标系下进行评价<br>评估指标采用业界常用的APE和RPE指标，关注各个指标的最大值、最小值、平均值和RMSE四个评价量<br>目前评估流程已经搭建完毕</p><p>轨迹界面：<br><img src="image-1.png" alt="Alt text"><br>东-北-天精度展示界面：<br><img src="image-2.png" alt="Alt text"><br>APE评估：<br><img src="image-3.png" alt="Alt text"><br>RPE评估：<br><img src="image-4.png" alt="Alt text"></p><h3 id="3-解决一些工程问题"><a href="#3-解决一些工程问题" class="headerlink" title="3. 解决一些工程问题"></a>3. 解决一些工程问题</h3><p><strong>3.1 ECEF-&gt; ENU, LLA-&gt;ENU转化函数的编写</strong><br>由于RTK真值数据的结果只有一个LLA数据，GVINS输出的是ECEF坐标系下数据，但是最终效果评估需要在ENU坐标系下进行，故需要编写ECEF-&gt; ENU, LLA-&gt;ENU函数。<br><strong>3.2 GNSS原始数据的保存</strong><br>因为下周想着让模型能学习GNSS原始数据与IMU之间的关系，所以需要想法子将GNSS原始数据保存下来。与IMU这种定长的数据不同，GNSS在每个时刻锁定的卫星数量是不确定的，所以不方便使用csv文件保存，故而采用json文件保存。我这种花了少量时间调研了C++常用的几种json文件读写工具，最终采用rapidjson实现卫星原始数据的保存，并学习了Rapidjson的用法，编写了相应的代码，目前已经完成了这部分功能的编写和测试，均工作正常。<br><strong>3.3 解决闰秒问题</strong><br>ROS端使用的是UTC时间，RTK使用的是GPS时间，GPS时间和UTC时间会存在一个闰秒问题，造成两者时间不同步，给评估工作带来麻烦</p><p>两者的转换关系是：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UTC_time = GPS_time - err_sec</span><br></pre></td></tr></table></figure><p>其中，err_sec是一个时间差，主要由闰秒问题产生，如果各个时间完全精确的话，err_sec应该是18.0秒整，但是由于接收机的原因，两者肯定不会这么准，所以需要在线计算，现在是上电时锁定GNSS数据后就在线计算一个err_sec，目前这个值大概是17.9几左右，需要在评估的时候手动对RTK时间进行修正<br><img src="image.png" alt="Alt text"></p><p>此外，由于闰秒的存在，DT长度总会比GT短18秒左右。评估指令中需要注意</p><h2 id="二、下周怎么安排"><a href="#二、下周怎么安排" class="headerlink" title="二、下周怎么安排"></a>二、下周怎么安排</h2><ol><li>评估网络训练效果</li><li>结合文献、评估效果对网络参数、网络结构、网络输入输出进行优化</li><li>做完GNSS原始量测生成的实验，并评估效果</li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> NaN </category>
+          
+          <category> NaN </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>WeeklyReport-003-03Dec2023</title>
+      <link href="/2023/12/03/WeeklyReport-003-03Dec2023/"/>
+      <url>/2023/12/03/WeeklyReport-003-03Dec2023/</url>
+      
+        <content type="html"><![CDATA[<h2 id="一、本周做了什么"><a href="#一、本周做了什么" class="headerlink" title="一、本周做了什么"></a>一、本周做了什么</h2><h3 id="1-GVINS-代码功能增加"><a href="#1-GVINS-代码功能增加" class="headerlink" title="1. GVINS 代码功能增加"></a>1. GVINS 代码功能增加</h3><p>1.1 捋清GVINS代码逻辑<br>进一步研究了GVINS的代码逻辑，理清了其中的关键变量、关键函数，增加了详细的注释<br>在我的github主页可以看到<br><a href="mailto:&#x67;&#105;&#116;&#x40;&#x67;&#105;&#116;&#x68;&#117;&#98;&#46;&#99;&#x6f;&#x6d;">&#x67;&#105;&#116;&#x40;&#x67;&#105;&#116;&#x68;&#117;&#98;&#46;&#99;&#x6f;&#x6d;</a>:wxtcon&#x2F;gvins_comments_by_damon.git<br>（对GVINS的所有修改都会push到github上）</p><p>1.2 增加虚拟串口输出功能<br>虚拟串口主要是为了方便代码调试，可以通过虚拟串口在另一个终端打印调试信息，并通过终端输入调试参数</p><p>1.3 增加地图轨迹显示功能<br>地图轨迹显示主要是为了写论文的时候将真实轨迹和算法的推理轨迹放在叠加在google地图中（我看别人的论文都是这么做的）<br>我使用python写了一个脚本，实现了输入LLA在地图上显示轨迹的功能<br>代码在我的github上，路径为：GVINS&#x2F;script&#x2F;map_track_visual.py<br>效果如图所示：<br><img src="f9f4809365b12a726a137a320660f250.JPG" alt="Alt text"></p><h3 id="2-数据集生成"><a href="#2-数据集生成" class="headerlink" title="2. 数据集生成"></a>2. 数据集生成</h3><p>在GVINS中增加了保存数据的功能，主要包含IMU测量、image测量、GNSS测量，并写入GVINS文件</p><h3 id="3-NN方案设计"><a href="#3-NN方案设计" class="headerlink" title="3. NN方案设计"></a>3. NN方案设计</h3><p>设计了三种GNSS中断条件下的LSTM网络，具体的网络输入输出设计周六已经同师兄已经讨论过，目前正在加紧训练</p><h3 id="4-学习-充电"><a href="#4-学习-充电" class="headerlink" title="4. 学习&#x2F;充电"></a>4. 学习&#x2F;充电</h3><p>总结SLAM中各种优化的区别（附录）</p><h2 id="二、下周怎么安排"><a href="#二、下周怎么安排" class="headerlink" title="二、下周怎么安排"></a>二、下周怎么安排</h2><p>下周主要是对设计的几种网络进行训练，主要包含：</p><ol><li><p>复现 delta_P_GNSS &#x3D; f(IMU, T)网络<br>这部分已经在做了，但是目前还没搞出来评估网络输出delta_P的效果的方法，计划先把这个网络复现了<br>与原论文呢不同的是，我的这个网络考虑了GNSS失效时间T，原论文没考虑</p></li><li><p>复现 raw_measurement_GNSS &#x3D; f(IMU, visual, T)<br>这里的期望输出是卫星的原始量测</p></li><li><p>复现 LLA_GNSS &#x3D; f(IMU, visual, T)<br>这里的输出的LLA直接是经纬高</p></li><li><p>在训练的时候，设计一种GNSS输出效果的评估指标&#x2F;方式，用于评估网络的训练效果</p></li></ol><h2 id="附录：谈一谈对SLAM中何种“优化的理解”"><a href="#附录：谈一谈对SLAM中何种“优化的理解”" class="headerlink" title="附录：谈一谈对SLAM中何种“优化的理解”"></a>附录：谈一谈对SLAM中何种“优化的理解”</h2><h3 id="对优化的理解"><a href="#对优化的理解" class="headerlink" title="对优化的理解"></a>对优化的理解</h3><h4 id="非线性优化"><a href="#非线性优化" class="headerlink" title="非线性优化"></a>非线性优化</h4><p>从直观上来说，优化就是沿着梯度下降的方向去找到使误差(代价函数)最小化的优化变量。<br>非线性优化，自然就是误差函数和需要优化的变量之间不是简单的线性关系，而是非线性的。<br>常用的库有ceres。</p><h4 id="图优化"><a href="#图优化" class="headerlink" title="图优化"></a>图优化</h4><p>图优化的本质还是优化，只不过是用图的方式去表达。把优化变量当做顶点，约束当做边，也是用梯度下降的方法去使误差最小化。<br>图优化的好处：因为slam的特性，图是稀疏的，因此可以用图理论去进行边缘化，消元，加速计算。<br>常用的库有g2o。</p><h4 id="因子图优化"><a href="#因子图优化" class="headerlink" title="因子图优化"></a>因子图优化</h4><p>和图优化不同的是，它的重点在因子图。<br>它的优化落脚点不再是最小二乘理论了，而是最大后验概率理论了。</p><p>因子图优化可以在问题的拓扑结构上进行一些顶层抽象和简化，而不是直接硬解，相当于多了一步简化过程。<br>如果只有路标和位姿之间的因子，和BA优化完全一样。不过因子图是个大筐，什么约束都能加，IMU，轮速计，GPS。<br>边缘化掉节点之后还能保留稍微复杂一些的分布，信息损失较少。还有isam，可以在顶层结构上分析出新的测量值进来之后哪些节点需要优化，节省资源。</p><p>常用库有gtsam</p><p><strong>需要注意的是：</strong></p><ol><li>如果先验概率分布和观测噪声都是高斯分布，同时系统的动力学是线性的，那么MAP估计和最小二乘估计是等价的。<br>这是因为在这种情况下，MAP估计就是在最小二乘目标函数上加上一个正则化项，该正则化项对应于负对数先验概率。</li><li>当系统的观测模型是线性的时，MAP估计也等价于最小二乘估计。在这种情况下，MAP估计的最优解与最小二乘估计的解相同。</li><li>在非高斯、非线性的情况下，MAP估计可以通过使用数值优化方法来解决。这可能涉及到使用梯度下降、牛顿法、粒子滤波等技术。在这种情况下，MAP估计和最小二乘估计可能会产生不同的结果。</li><li>等价性的条件是有限制的，MAP估计更一般地适用于各种概率分布和模型。</li></ol><h4 id="位姿图优化"><a href="#位姿图优化" class="headerlink" title="位姿图优化"></a>位姿图优化</h4><p>位姿图优化，假设路标点是确定的，优化变量只有位姿，路标点成了约束。<br>位姿图是简化的BA<br>位姿图优化就是把各个位姿构成误差方程，优化各个位姿，不涉及路标点<br>位姿图需要考虑回环检测，最终矩阵可能不是稀疏矩阵。但好在不需要实时运行，cpu有空闲就算一些，有空闲就算一些，所以矩阵不稀疏也不是什么大问题。</p><h4 id="BA优化"><a href="#BA优化" class="headerlink" title="BA优化"></a>BA优化</h4><p>位姿图优化和BA优化都是slam中的具体问题<br>带有相机位姿和空间点的图优化称为BA<br>BA是SLAM和SFM定义出来的一个优化问题，以重投影误差为误差函数，以每个时刻位姿和所有路标点为优化变量<br>BA优化中，路标点和位姿都是不确定的，都是优化变量<br>BA优化，路标点数量远大于位姿数量，是一个箭头型矩阵，可以用舒尔补的方法转换成三角阵快速求解。在前端中，需要实时求解。</p><h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>本质都是非线性优化<br>因子图优化或者图优化指大规模稀疏的非线性优化，采用遍历图的方式去解非线性优化问题中的非线性方程组。<br>位姿图优化和ba优化是针对特定问题的图优化。<br>如果不去深究优化时选用什么样的矩阵分解方法的话，可以理解成都是一回事。<br>说白了，最后就是加权平均，没什么高深的。科技以改名为主。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> NaN </category>
+          
+          <category> NaN </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>周报-002-26Nov2023</title>
       <link href="/2023/11/26/WeeklyReport-002-26Nov2023/"/>
       <url>/2023/11/26/WeeklyReport-002-26Nov2023/</url>
