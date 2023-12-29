@@ -4,6 +4,48 @@
   
     
     <entry>
+      <title>WP-006-24Dec2023</title>
+      <link href="/2023/12/24/WP-006-24Dec2023/"/>
+      <url>/2023/12/24/WP-006-24Dec2023/</url>
+      
+        <content type="html"><![CDATA[<h2 id="一、本周做了什么"><a href="#一、本周做了什么" class="headerlink" title="一、本周做了什么"></a>一、本周做了什么</h2><ol><li><p>读AI辅助GNSS outages的文献<br> 阅读了十几篇AI辅助GNSS outages相关领域的文献，并进行了整理，将作为Related work部分</p></li><li><p>完成了LSTM付出GNSS定位算法仿真实验、流程图绘制等<br> 本周对上周初步的仿真结果进行了参数调整，详见附件PPT</p></li><li><p>花了两天时间做了NN直接预测伪距和多普勒的实验，效果不佳，暂时放弃</p></li><li><p>整理近期工作的PPT并准备组会汇报</p></li></ol><h2 id="二、下周计划"><a href="#二、下周计划" class="headerlink" title="二、下周计划"></a>二、下周计划</h2><ol><li>增加实验对比（RTKLIB、VINS-Fusion等），归纳整理</li><li>购买ublox zed f9p定位模块并学习使用方法</li><li>将定位模块安装在小车上，并去室外采集实验数据</li></ol><p>附件：本阶段工作整理PPT</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> NaN </category>
+          
+          <category> NaN </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>WeeklyReport-005-17Dec2023</title>
+      <link href="/2023/12/17/WeeklyReport-005-17Dec2023/"/>
+      <url>/2023/12/17/WeeklyReport-005-17Dec2023/</url>
+      
+        <content type="html"><![CDATA[<h1 id="工作周报"><a href="#工作周报" class="headerlink" title=" 工作周报 "></a><p style="text-align: center;"> 工作周报 </p></h1><p style="text-align: center;"> <b>时间: </b> 2023-12-11 ~ 2023-12-17 </p><br><h2 id="一、本周做了什么"><a href="#一、本周做了什么" class="headerlink" title="一、本周做了什么"></a>一、本周做了什么</h2><h3 id="1-增加训练集-测试集数据，并进行训练"><a href="#1-增加训练集-测试集数据，并进行训练" class="headerlink" title="1. 增加训练集&#x2F;测试集数据，并进行训练"></a>1. 增加训练集&#x2F;测试集数据，并进行训练</h3><p>上周用于实验的数据太少了，导致模型训练出来的效果不好，本周对数据集进行了扩充，序列长度由5min增加到25min.<br>目前可供使用的数据有：</p><p>原始量测：IMU（a w）、GNSS（psr、 dopplar）<br>初步处理：IMU预积分数据、<br>融合输出：GVINS结果（GNSS有效）、VINS结果（GNSS无效）<br>真值系统：RTK真值</p><p>扩充后训练效果好了很多，效果展示如下：</p><p><strong>数据集：</strong><br>sports_field —– 5mins(4mins-train 1min-eval)<br>数据集：1510秒，train:eval &#x3D; 8：2 &#x3D; 20mins:5mins</p><p><strong>NN 描述：</strong><br>2 layers LSTM with 64 hidden layer<br>loss funcation : MSE<br>optimizer:Adam betas&#x3D;(0.9, 0.999), eps&#x3D;1e-08, weight_decay&#x3D;0</p><p>input: imu pre-integration position<br>output: GVINS fusion position</p><p><strong>参数情况：</strong><br>Epoches:100<br>learn_rate:0.01</p><p><strong>结果描述</strong></p><p>Model name: lstm_N100_lr0.01_20231216-094112.pth (Available)</p><p>验证效果变好，eval_loss&#x3D;0.0005173331317691145<br>loss 曲线：<br><img src="img%20(2).png" alt="Alt text"></p><p>验证效果：<br><img src="img%20(1).png" alt="Alt text"></p><p>参数还需要精调</p><h3 id="2-完成效果评估系统搭建"><a href="#2-完成效果评估系统搭建" class="headerlink" title="2. 完成效果评估系统搭建"></a>2. 完成效果评估系统搭建</h3><p>打通从传感器量测到融合输出到评估系统的全流程。例如使用evo评估工具对融合结果进行评估：</p><p>sport-field.bag<br>截取前5分钟数据<br>仅评估位置，不评估姿态（gt无姿态）</p><p>evo对齐方式：仅原点对齐</p><h2 id="Case0-对照-no-align-GVINS-GNSS无故障原始输出"><a href="#Case0-对照-no-align-GVINS-GNSS无故障原始输出" class="headerlink" title="Case0 [对照-no align] GVINS- GNSS无故障原始输出"></a>Case0 [对照-no align] GVINS- GNSS无故障原始输出</h2><p><strong>轨迹：</strong><br><img src="image.png" alt="Alt text"><br><img src="image-2.png" alt="Alt text"><br><img src="image-1.png" alt="Alt text"><br><strong>ape结果：</strong><br><img src="image-4.png" alt="Alt text"><br><img src="image-3.png" alt="Alt text"><br><strong>rpe结果：</strong><br><img src="image-5.png" alt="Alt text"><br><img src="image-6.png" alt="Alt text"></p><h2 id="Case1-对照-纯VINS"><a href="#Case1-对照-纯VINS" class="headerlink" title="Case1 [对照] 纯VINS"></a>Case1 [对照] 纯VINS</h2><p><strong>轨迹：</strong><br><img src="image-7.png" alt="Alt text"><br><img src="image-10.png" alt="Alt text"><br><img src="image-11.png" alt="Alt text"></p><p><strong>ape结果：</strong><br><img src="image-8.png" alt="Alt text"><br><img src="image-9.png" alt="Alt text"></p><p><strong>rpe结果：</strong><br><img src="image-12.png" alt="Alt text"><br><img src="image-13.png" alt="Alt text"></p><p>在数据指标方面，选取了下图的指标（也是论文中常用的指标）进行评估：<br><img src="image.png" alt="Alt text"></p><h3 id="3-快速过了一遍深度学习的视频"><a href="#3-快速过了一遍深度学习的视频" class="headerlink" title="3. 快速过了一遍深度学习的视频"></a>3. 快速过了一遍深度学习的视频</h3><p>花了一天的时间过了一遍深度学习的基础，算是扫盲<br>主要包含：<br>NN的基本知识（NN结构、损失函数、得分函数、forward、backward、训练的步骤、optimizer(Adam etc)）<br>CNN基础（卷积操作、step、padding、空洞卷积）<br>RNN基础、LSTM基础（结构、forward过程）</p><p>并整理了关键点笔记</p><h3 id="4-学习-修改LSTM网络，并整理了自己在学习期间的一些感悟"><a href="#4-学习-修改LSTM网络，并整理了自己在学习期间的一些感悟" class="headerlink" title="4. 学习&#x2F;修改LSTM网络，并整理了自己在学习期间的一些感悟"></a>4. 学习&#x2F;修改LSTM网络，并整理了自己在学习期间的一些感悟</h3><p>深入的学习的LSTM的原理，对：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">单点预测（已知0到T-1，预测T）</span><br><span class="line">多点多长度预测（已知0到T，预测T+N ~ T+N+M）</span><br><span class="line">多长度预测（已知0到T，预测T+1 ~ T+N）</span><br></pre></td></tr></table></figure><p>进行了深入研究，并结合股票预测的问题进行了验证，期间有一些心得体会，整理如下:</p><p><strong>LSTM学习有感-股票预测</strong></p><p>最近在研究LSTM预测相关知识，搞了两天，发现自己似乎进了一个大坑，记录一下这两天干的事和一些感悟</p><p><strong>1. 实验过程描述</strong></p><p>一条股票【收盘价】数据，85% 的数据用于训练，15% 的数据用于测试<br>2层LSTM，64个隐藏层<br>LEARNING_RATE &#x3D; 1e-2, epoch &#x3D; 150<br>loss是mse, adam优化器， drop_out&#x3D;20%<br>采样滑窗50</p><p>单点预测：<br>用1-49天真实数据跑出第50天的预测数据<br>然后用2-50天的真实数据跑出第51天预测数据,<br>以此类推. 得到了一组预测数据</p><p><strong>效果：</strong><br><strong>训练loss曲线：</strong><br><img src="image-110.png" alt="Alt text"></p><p>test loss &#x3D; 0.0009153251885436475 (很小)</p><p><img src="image-111.png" alt="Alt text"><br>效果好到离谱， 趋势很对</p><p>** 2. 错误原因分析**</p><p>lstm从纯股价并没学到有效信息，但是在单点预测中，连续两天股价变化其实很小，并且loss函数式mse，所以模型默认用上一天的数据加一点拟合的噪声来当作预测值。这样loss最小，但其实没有意义。</p><p>个人觉得评价指标和损失选得不行，没能反应问题的实质。</p><h2 id="3-一些tips"><a href="#3-一些tips" class="headerlink" title="3. 一些tips"></a>3. 一些tips</h2><ol><li>金融市场做预测，要预测收益率，不要预测价格，反应到车辆轨迹预测，要预测运动趋势的变动（速度、加速度变化），不要直接预测位置</li></ol><h3 id="5-学习不同GNSS的时间框架，并整理"><a href="#5-学习不同GNSS的时间框架，并整理" class="headerlink" title="5. 学习不同GNSS的时间框架，并整理"></a>5. 学习不同GNSS的时间框架，并整理</h3><p>在扩充数据集的时候，遇到了UTC、GNSS不同星座的时间同步问题，这是一个非常恼人的问题，故而去仔细学习了这方面内容，并做了整理。已经上传到了我的个人博客，链接如下：<br><a href="https://www.damonai.cn/2023/12/14/GNSS%E6%97%B6%E9%97%B4%E7%B3%BB%E7%BB%9F%E5%8F%8A%E5%85%B6%E8%BD%AC%E6%8D%A2/">https://www.damonai.cn/2023/12/14/GNSS%E6%97%B6%E9%97%B4%E7%B3%BB%E7%BB%9F%E5%8F%8A%E5%85%B6%E8%BD%AC%E6%8D%A2/</a> </p><h2 id="二、下周怎么安排"><a href="#二、下周怎么安排" class="headerlink" title="二、下周怎么安排"></a>二、下周怎么安排</h2><ol><li>搜索相关文件，对当前朴素的网络进行修改，并对网络参数进行调整优化</li><li>对目前已有的、下周即将开展的实验结果进行整理（指标、图表等）</li><li>结合文献，对当前整个GNSS deny环境下的定位思路进行梳理</li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> NaN </category>
+          
+          <category> NaN </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>GNSS时间系统及其转换</title>
       <link href="/2023/12/14/GNSS%E6%97%B6%E9%97%B4%E7%B3%BB%E7%BB%9F%E5%8F%8A%E5%85%B6%E8%BD%AC%E6%8D%A2/"/>
       <url>/2023/12/14/GNSS%E6%97%B6%E9%97%B4%E7%B3%BB%E7%BB%9F%E5%8F%8A%E5%85%B6%E8%BD%AC%E6%8D%A2/</url>
